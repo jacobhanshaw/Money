@@ -30,13 +30,16 @@ typedef enum PaymentStatuses {
     
     
     IBOutlet UIButton *saveButton;
+    IBOutlet UIButton *backButton;
     IBOutlet UIButton *payNowButton;
     
     PaymentStatus status;
 }
 
 - (IBAction)saveButtonPressed:(id)sender;
+- (IBAction)backButtonPressed:(id)sender;
 - (IBAction)payNowButtonPressed:(id)sender;
+
 
 
 @end

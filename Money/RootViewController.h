@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "PaymentViewController.h"
+#import "AppModel.h"
+#import "Transaction.h"
+#import "AFJSONRequestOperation.h"
 
 @interface RootViewController : UIViewController <UITableViewDataSource, UITableViewDelegate> {
     

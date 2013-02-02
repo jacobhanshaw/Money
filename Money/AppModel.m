@@ -10,6 +10,8 @@
 
 @implementation AppModel
 
+@synthesize currentTransactions;
+
 + (id)sharedAppModel
 {
     static dispatch_once_t pred = 0;
@@ -28,7 +30,7 @@
 		//NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         
         //NSNotificationCenter *dispatcher = [NSNotificationCenter defaultCenter];
-
+        currentTransactions = [[NSMutableArray alloc] init];
 	}
     return self;
 }

@@ -9,8 +9,10 @@
 #import <Foundation/Foundation.h>
 
 @interface AppModel : NSObject {
-    
+    NSMutableArray *currentTransactions;
 }
+
+@property (nonatomic) NSMutableArray *currentTransactions;
 
 + (AppModel *)sharedAppModel;
 

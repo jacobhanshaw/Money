@@ -26,7 +26,8 @@
 }
 
 - (IBAction)payNowButtonPressed:(id)sender {
-    
+    PaymentViewController *payController = [[PaymentViewController alloc] init];
+    [self presentViewController:payController animated:YES completion:nil];
 }
 
 - (id)initWithFrame:(CGRect)frame {
@@ -52,6 +53,17 @@
     // Do any additional setup after loading the view from its nib.
 }
 
+- (void) viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([defaults objectForKey:@"token"] == [NSNull null]){
+        
+    }
+    
+    [self populateRecentTransactionsTable];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -65,7 +77,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 1;
+    return [[AppModel sharedAppModel].currentTransactions count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -73,9 +85,38 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
     if (cell == nil) cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
     
-    cell.textLabel.text = [NSString stringWithFormat:@"Row: %d", indexPath.row];
+    cell.textLabel.text = ((Transaction *)[[AppModel sharedAppModel].currentTransactions objectAtIndex:indexPath.row]).otherParty;
     
     return cell;
+}
+
+- (void) populateRecentTransactionsTable {
+    NSURL *url = [NSURL URLWithString:@"http://uselessinter.net/money/api/getRecentTransactions?id=1"];
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        [self parseRecentTransactions:JSON];
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id result){
+        NSLog(@"ERROR: %@", [error localizedDescription]);
+    }];
+    
+    [operation start];
+}
+
+- (void) parseRecentTransactions: (id) JSON {
+    NSArray *transactions = [[NSArray alloc] init];
+    transactions = [JSON valueForKeyPath:@"transactions"];
+    for(int i = 0; i < [transactions count]; ++i){
+        Transaction *transaction = [[Transaction alloc] init];
+        transaction.transactionId = [[[transactions objectAtIndex:i] valueForKeyPath:@"id"] intValue];
+        transaction.isLoaner = [@"You" isEqualToString:[[transactions objectAtIndex:i] valueForKeyPath:@"creditor"]];
+        transaction.hasBeenPayed = NO; //BASED ON query ran
+        transaction.otherParty = transaction.isLoaner ? [[transactions objectAtIndex:i] valueForKeyPath:@"debtor"] : [[transactions objectAtIndex:i] valueForKeyPath:@"creditor"];
+        transaction.amount = [[[transactions objectAtIndex:i] valueForKeyPath:@"amount"] floatValue];
+        transaction.currency = [[transactions objectAtIndex:i] valueForKeyPath:@"currency"];
+        [[AppModel sharedAppModel].currentTransactions addObject:transaction];
+    }
+    [debtsTableView reloadData];
 }
 
 - (void)viewDidUnload {

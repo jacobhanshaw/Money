@@ -58,13 +58,18 @@
     recipientEmailPhoneTextField = nil;
     dollarPicker = nil;
     centPicker = nil;
-    payNowButton = nil;
     saveButton = nil;
+    backButton = nil;
+    payNowButton = nil;
     [super viewDidUnload];
 }
 
 - (IBAction)saveButtonPressed:(id)sender {
 
+}
+
+- (IBAction)backButtonPressed:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)payNowButtonPressed:(id)sender {
