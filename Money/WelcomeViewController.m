@@ -35,4 +35,12 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)viewDidUnload {
+    lbl_name = nil;
+    fNameTextField = nil;
+    lNameTextField = nil;
+    emailTextField = nil;
+    goButton = nil;
+    [super viewDidUnload];
+}
 @end

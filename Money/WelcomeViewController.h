@@ -8,6 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
-@interface WelcomeViewController : UIViewController
+@interface WelcomeViewController : UIViewController<UITextFieldDelegate> {
+    
+    IBOutlet UILabel *lbl_name;
+    IBOutlet UITextField *fNameTextField;
+    IBOutlet UITextField *lNameTextField;
+    IBOutlet UITextField *emailTextField;
+    IBOutlet UIButton *goButton;
+    
+}
 
 @end
