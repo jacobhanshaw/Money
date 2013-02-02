@@ -6,9 +6,18 @@
 //  Copyright (c) 2013 Jacob Hanshaw. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "AppDelegate.h"
+#import "PayPal.h"
+#import "PayPalPayment.h"
+#import "PayPalInvoiceItem.h"
 
-@interface PaymentViewController : UIViewController  <UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate> {
+typedef enum PaymentStatuses {
+	PAYMENTSTATUS_SUCCESS,
+	PAYMENTSTATUS_FAILED,
+	PAYMENTSTATUS_CANCELED,
+} PaymentStatus;
+
+@interface PaymentViewController : UIViewController  <UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate, PayPalPaymentDelegate> {
     
     IBOutlet UILabel *lbl_nameLabel;
     IBOutlet UILabel *lbl_emailPhoneLabel;
@@ -23,6 +32,7 @@
     IBOutlet UIButton *saveButton;
     IBOutlet UIButton *payNowButton;
     
+    PaymentStatus status;
 }
 
 - (IBAction)saveButtonPressed:(id)sender;
