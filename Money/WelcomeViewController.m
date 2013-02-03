@@ -30,7 +30,8 @@ BOOL processingLogin;
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     processingLogin = NO;
-    activityIndicator = [[UIActivityIndicatorView alloc] init];
+ //   activityIndicator = [[UIActivityIndicatorView alloc] init];
+    returnPressed = NO;
   //  activityIndicator.hidden = YES;
 }
 
@@ -89,6 +90,13 @@ BOOL processingLogin;
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     [textField resignFirstResponder];
+    
+    if(textField == [alertWithTextView textFieldAtIndex:0]){
+        [self submitConfirmationPasswordForApproval:[alertWithTextView textFieldAtIndex:0].text];
+        returnPressed = YES;
+        [alertWithTextView dismissWithClickedButtonIndex:alertWithTextView.cancelButtonIndex animated:YES];
+    }
+    
     return YES;
 }
 
@@ -160,7 +168,7 @@ BOOL processingLogin;
         [alert show];
     }
     else {
-        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://uselessinter.net/money/api/newUser?f=%@&l=%@&e=%@",fNameTextField.text,lNameTextField.text, emailTextField.text]];
+        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://uselessinter.net/money/api/newUser?f=%@&l=%@&e=%@",fNameTextField.text,lNameTextField.text, [emailTextField.text lowercaseString]]];
         NSURLRequest *request = [NSURLRequest requestWithURL:url];
         
         AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
@@ -200,14 +208,68 @@ BOOL processingLogin;
         [operation start];
     }
 }
+
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
 	NSString *title = [alertView title];
     
     if([title isEqualToString:@"Email in Use"]) {
         if (buttonIndex == 1) {
             //CLAIM EMAIL ADDRESS
+            [self performSelector:@selector(promptForEmailAuthentication) withObject:nil afterDelay:0.1];
         }
     }
+    else if([title isEqualToString:@"Email Confirmation"]) {
+        if(!returnPressed)[self submitConfirmationPasswordForApproval:[alertWithTextView textFieldAtIndex:0].text];
+    }
+}
+
+- (void)promptForEmailAuthentication {
+    alertWithTextView = [[UIAlertView alloc]
+                          initWithTitle:@"Email Confirmation" message:@"Please Enter Your Confirmation Number" delegate:self
+                          cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    
+    [alertWithTextView setAlertViewStyle:UIAlertViewStylePlainTextInput];
+    [[alertWithTextView textFieldAtIndex:0] setDelegate:self];
+    [[alertWithTextView textFieldAtIndex:0] setKeyboardType:UIKeyboardTypeNumberPad];
+    [alertWithTextView show];
+}
+
+- (void)submitConfirmationPasswordForApproval:(NSString *)confirmation{
+    activityIndicator.hidden = NO;
+    [activityIndicator startAnimating];
+    goButton.hidden = YES;
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://uselessinter.net/money/api/confirmUser?c=%@&e=%@&f=%@&l=%@",confirmation,emailTextField.text, fNameTextField.text, lNameTextField.text]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        
+        [activityIndicator stopAnimating];
+        goButton.hidden = NO;
+        
+        int id_num = [[JSON valueForKeyPath:@"id_num"] intValue];
+        
+        NSLog(@"ID: %d", id_num);
+        
+        if(id_num == -1){
+            UIAlertView *alert = [[UIAlertView alloc]
+                                  initWithTitle:@"Invalid Confirmation Code" message:@"Code Entered Was Not Correct" delegate:self
+                                  cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+        }
+        else {
+            [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%d", id_num] forKey:@"id"];
+            [[NSUserDefaults standardUserDefaults] setObject:fNameTextField.text forKey:@"first_name"];
+            [[NSUserDefaults standardUserDefaults] setObject:lNameTextField.text forKey:@"last_name"];
+            [[NSUserDefaults standardUserDefaults] setObject:emailTextField.text forKey:@"email"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            
+            [self dismissViewControllerAnimated:YES completion:nil];
+        }
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id result){
+        NSLog(@"ERROR: %@", [error localizedDescription]);
+    }];
+    
+    [operation start];
 }
 
 

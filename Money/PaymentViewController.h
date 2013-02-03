@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Jacob Hanshaw. All rights reserved.
 //
 
-#import "AppDelegate.h"
+#import "RootViewController.h"
 #import "PayPal.h"
 #import "PayPalPayment.h"
 #import "PayPalInvoiceItem.h"

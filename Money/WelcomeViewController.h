@@ -19,6 +19,8 @@
     IBOutlet UITableView *createUserTableView;
     IBOutlet UIActivityIndicatorView *activityIndicator;
     
+    UIAlertView *alertWithTextView;
+    BOOL returnPressed;
 }
 
 - (IBAction)goButtonPressed:(id)sender;

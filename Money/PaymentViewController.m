@@ -43,13 +43,19 @@
     isPositive = YES;
     payNowButton.hidden = YES;
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bumpReceived:) name:@"bumpReceived" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bumpReceived) name:@"bumpReceived" object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     
     bumpEmail = @"";
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+   // [self configureBump];
 }
 
 - (void)didReceiveMemoryWarning
@@ -121,9 +127,10 @@
 }
 
 - (void)bumpReceived {
-    NSLog(@"I GOT ALL THE DATA: %@", ((AppDelegate *)[[UIApplication sharedApplication] delegate]).bumpStringReceived);
-    bumpEmail = ((AppDelegate *)[[UIApplication sharedApplication] delegate]).bumpStringReceived;
-    [self payWithPayPal];
+    //NSLog(@"I GOT ALL THE DATA: %@", [RootViewController sharedRootViewController].bumpResult);
+    bumpEmail = [RootViewController sharedRootViewController].bumpResult;
+    recipientEmailPhoneTextField.text = bumpEmail;
+    //[self payWithPayPal];
 }
 
 //ADD CURRENCY
@@ -146,7 +153,7 @@
         
         int payedNumber = payed ? 2 : 0;
         
-        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://uselessinter.net/money/api/add?e=%@&a=%@&d=%@&p=%d&me=%@",recipientEmailPhoneTextField.text,amountString, descriptionTextField.text,payedNumber, [[NSUserDefaults standardUserDefaults] objectForKey:@"id"]]];
+        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://uselessinter.net/money/api/add?e=%@&a=%@&d=%@&p=%d&me=%@",[recipientEmailPhoneTextField.text lowercaseString],amountString, descriptionTextField.text,payedNumber, [[NSUserDefaults standardUserDefaults] objectForKey:@"id"]]];
         NSURLRequest *request = [NSURLRequest requestWithURL:url];
         
         AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
@@ -160,7 +167,7 @@
             NSLog(@"ID: %d", id_num);
             
             UIAlertView *alert = [[UIAlertView alloc]
-                                      initWithTitle:@"Congratulations" message:@"Payment Sent" delegate:self
+                                      initWithTitle:@"Congratulations" message:@"Transaction Added" delegate:self
                                       cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [alert show];
                 

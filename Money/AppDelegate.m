@@ -13,7 +13,6 @@
 @synthesize managedObjectContext = _managedObjectContext;
 @synthesize managedObjectModel = _managedObjectModel;
 @synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
-@synthesize bumpStringReceived;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -30,8 +29,6 @@
     //	[PayPal initializeWithAppID:@"your live app id" forEnvironment:ENV_LIVE];
 	//[PayPal initializeWithAppID:@"anything" forEnvironment:ENV_NONE];
     
-    [self configureBump];
-    
     if([self.window respondsToSelector:@selector(setRootViewController:)])
         [self.window setRootViewController:[RootViewController sharedRootViewController]];
     else
@@ -40,51 +37,6 @@
     [self.window makeKeyAndVisible]; 
     
     return YES;
-}
-
-- (void) configureBump {
-    [BumpClient configureWithAPIKey:@"9e4909806e1144959884ad8f06ace7fd" andUserID:[[UIDevice currentDevice] name]];
-    
-    [[BumpClient sharedClient] setMatchBlock:^(BumpChannelID channel) {
-        NSLog(@"Matched with user: %@", [[BumpClient sharedClient] userIDForChannel:channel]);
-        [[BumpClient sharedClient] confirmMatch:YES onChannel:channel];
-    }];
-    
-    [[BumpClient sharedClient] setChannelConfirmedBlock:^(BumpChannelID channel) {
-        NSLog(@"Channel with %@ confirmed.", [[BumpClient sharedClient] userIDForChannel:channel]);
-        
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        if(![[defaults objectForKey:@"email"] isEqualToString:@""] && !([defaults objectForKey:@"email"] == nil)) [[BumpClient sharedClient] sendData:[[defaults objectForKey:@"email"] dataUsingEncoding:NSUTF8StringEncoding] toChannel:channel];
-        
-        else [[BumpClient sharedClient] sendData:[[NSString stringWithFormat:@"Hello, %@", [[UIDevice currentDevice] name]] dataUsingEncoding:NSUTF8StringEncoding] toChannel:channel];
-    }];
-    
-    [[BumpClient sharedClient] setDataReceivedBlock:^(BumpChannelID channel, NSData *data) {
-        NSLog(@"Data received from %@: %@",
-              [[BumpClient sharedClient] userIDForChannel:channel],
-              [NSString stringWithCString:[data bytes] encoding:NSUTF8StringEncoding]);
-        bumpStringReceived =  [NSString stringWithCString:[data bytes] encoding:NSUTF8StringEncoding];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"bumpReceived" object:nil];
-    }];
-    
-    [[BumpClient sharedClient] setConnectionStateChangedBlock:^(BOOL connected) {
-        if (connected) {
-            NSLog(@"Bump connected...");
-        } else {
-            NSLog(@"Bump disconnected...");
-        }
-    }];
-    
-    [[BumpClient sharedClient] setBumpEventBlock:^(bump_event event) {
-        switch(event) {
-            case BUMP_EVENT_BUMP:
-                NSLog(@"Bump detected.");
-                break;
-            case BUMP_EVENT_NO_MATCH:
-                NSLog(@"No match.");
-                break;
-        }
-    }];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

@@ -8,19 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "RootViewController.h"
-#import "BumpClient.h"
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate> {
-    NSString *bumpStringReceived;
-}
+@interface AppDelegate : UIResponder <UIApplicationDelegate> 
 
 @property (strong, nonatomic) UIWindow *window;
 
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
-
-@property (nonatomic) NSString *bumpStringReceived;
 
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;

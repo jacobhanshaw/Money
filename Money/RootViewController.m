@@ -10,6 +10,8 @@
 
 @implementation RootViewController
 
+@synthesize bumpResult;
+
 + (id)sharedRootViewController
 {
     static dispatch_once_t pred = 0;
@@ -46,6 +48,49 @@
     return self;
 }
 
+- (void) configureBump {
+    [BumpClient configureWithAPIKey:@"9e4909806e1144959884ad8f06ace7fd" andUserID:[[UIDevice currentDevice] name]];
+    
+    [BumpClient sharedClient].bumpable = YES;
+    
+    [[BumpClient sharedClient] setMatchBlock:^(BumpChannelID channel) {
+        NSLog(@"Matched with user: %@", [[BumpClient sharedClient] userIDForChannel:channel]);
+        [[BumpClient sharedClient] confirmMatch:YES onChannel:channel];
+    }];
+    
+    [[BumpClient sharedClient] setChannelConfirmedBlock:^(BumpChannelID channel) {
+        NSLog(@"Channel with %@ confirmed.", [[BumpClient sharedClient] userIDForChannel:channel]);
+        [[BumpClient sharedClient] sendData:[[[NSUserDefaults standardUserDefaults] objectForKey:@"email"] dataUsingEncoding:NSUTF8StringEncoding] toChannel:channel];
+    }];
+    
+    [[BumpClient sharedClient] setDataReceivedBlock:^(BumpChannelID channel, NSData *data) {
+        NSLog(@"Data received from %@: %@",
+              [[BumpClient sharedClient] userIDForChannel:channel],
+              [NSString stringWithCString:[data bytes] encoding:NSUTF8StringEncoding]);
+        bumpResult = [NSString stringWithCString:[data bytes] encoding:NSUTF8StringEncoding];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"bumpReceived" object:nil];
+    }];
+    
+    [[BumpClient sharedClient] setConnectionStateChangedBlock:^(BOOL connected) {
+        if (connected) {
+            NSLog(@"Bump connected...");
+        } else {
+            NSLog(@"Bump disconnected...");
+        }
+    }];
+    
+    [[BumpClient sharedClient] setBumpEventBlock:^(bump_event event) {
+        switch(event) {
+            case BUMP_EVENT_BUMP:
+                NSLog(@"Bump detected.");
+                break;
+            case BUMP_EVENT_NO_MATCH:
+                NSLog(@"No match.");
+                break;
+        }
+    }];
+}
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -59,6 +104,8 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    
+    [self configureBump];
 }
 
 - (void) viewWillAppear:(BOOL)animated {
@@ -106,7 +153,7 @@
         cell.textLabel.text = [NSString stringWithFormat:@"You owe %@", ((Transaction *)[[AppModel sharedAppModel].currentTransactions objectAtIndex:indexPath.row]).otherParty];
         cell.detailTextLabel.textColor = [UIColor redColor];
     }
-    
+    cell.textLabel.font = [UIFont systemFontOfSize:16];
     cell.detailTextLabel.text = [NSString stringWithFormat:@"$%.2f", ((Transaction *)[[AppModel sharedAppModel].currentTransactions objectAtIndex:indexPath.row]).amount];
     
     return cell;

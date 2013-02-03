@@ -12,6 +12,7 @@
 #import "Transaction.h"
 #import "AFJSONRequestOperation.h"
 #import "WelcomeViewController.h"
+#import "BumpClient.h"
 
 @interface RootViewController : UIViewController <UITableViewDataSource, UITableViewDelegate> {
     
@@ -28,7 +29,10 @@
     IBOutlet UIActivityIndicatorView *activityIndicator;
     
     float totalAmount;
+    NSString *bumpResult;
 }
+
+@property (nonatomic) NSString *bumpResult;
 
 + (RootViewController *)sharedRootViewController;
 
