@@ -36,7 +36,7 @@
 				<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 			</object>
 			<object class="IBUIView" id="191373211">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<array class="NSMutableArray" key="NSSubviews">
 					<object class="IBUILabel" id="64494188">
@@ -44,6 +44,7 @@
 						<int key="NSvFlags">292</int>
 						<string key="NSFrame">{{20, 15}, {182, 21}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="518520411"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
@@ -75,6 +76,7 @@
 						<int key="NSvFlags">292</int>
 						<string key="NSFrame">{{20, 80}, {272, 21}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="913598358"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
@@ -95,6 +97,7 @@
 						<int key="NSvFlags">292</int>
 						<string key="NSFrame">{{20, 37}, {182, 30}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="247260397"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
@@ -131,6 +134,7 @@
 						<int key="NSvFlags">292</int>
 						<string key="NSFrame">{{20, 109}, {182, 30}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="96667155"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
@@ -139,6 +143,7 @@
 						<int key="IBUIContentVerticalAlignment">0</int>
 						<string key="IBUIText"/>
 						<int key="IBUIBorderStyle">3</int>
+						<string key="IBUIPlaceholder">PayPal Email Address</string>
 						<object class="NSColor" key="IBUITextColor">
 							<int key="NSColorSpace">3</int>
 							<bytes key="NSWhite">MAA</bytes>
@@ -157,6 +162,7 @@
 						<int key="NSvFlags">290</int>
 						<string key="NSFrame">{{82, 180}, {120, 216}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="976219283"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -167,6 +173,7 @@
 						<int key="NSvFlags">290</int>
 						<string key="NSFrame">{{199, 180}, {100, 216}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="434848314"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -177,6 +184,7 @@
 						<int key="NSvFlags">292</int>
 						<string key="NSFrame">{{245, 106}, {63, 35}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="537854983"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
@@ -211,6 +219,7 @@
 						<int key="NSvFlags">292</int>
 						<string key="NSFrame">{{239, 2}, {75, 75}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="275474313"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
@@ -232,6 +241,8 @@
 						<int key="NSvFlags">292</int>
 						<string key="NSFrame">{{24, 398}, {272, 53}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -252,6 +263,7 @@
 						<int key="NSvFlags">292</int>
 						<string key="NSFrame">{{14, 258}, {60, 60}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="20994327"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
@@ -274,6 +286,7 @@
 						<int key="NSvFlags">292</int>
 						<string key="NSFrame">{{13, 147}, {294, 21}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="822537107"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
@@ -281,7 +294,7 @@
 						<int key="IBUIContentMode">7</int>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-						<string key="IBUIText">Label</string>
+						<string key="IBUIText"/>
 						<reference key="IBUITextColor" ref="629078244"/>
 						<nil key="IBUIHighlightedColor"/>
 						<int key="IBUIBaselineAdjustment">0</int>
@@ -295,6 +308,7 @@
 						<int key="NSvFlags">-2147483356</int>
 						<string key="NSFrame">{{142, 211}, {37, 37}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="56560065"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
@@ -307,6 +321,8 @@
 					</object>
 				</array>
 				<string key="NSFrame">{{0, 20}, {320, 460}}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="64494188"/>
 				<object class="NSColor" key="IBUIBackgroundColor">
 					<int key="NSColorSpace">3</int>
@@ -683,14 +699,14 @@
 						<string key="activityIndicator">UIActivityIndicatorView</string>
 						<string key="backButton">UIButton</string>
 						<string key="centPicker">UIPickerView</string>
+						<string key="descriptionTextField">UITextField</string>
 						<string key="dollarPicker">UIPickerView</string>
+						<string key="lbl_descriptionLabel">UILabel</string>
 						<string key="lbl_emailPhoneLabel">UILabel</string>
-						<string key="lbl_nameLabel">UILabel</string>
 						<string key="lbl_whoOwesWho">UILabel</string>
 						<string key="payNowButton">UIButton</string>
 						<string key="posNegButton">UIButton</string>
 						<string key="recipientEmailPhoneTextField">UITextField</string>
-						<string key="recipientNameTextField">UITextField</string>
 						<string key="saveButton">UIButton</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -706,16 +722,20 @@
 							<string key="name">centPicker</string>
 							<string key="candidateClassName">UIPickerView</string>
 						</object>
+						<object class="IBToOneOutletInfo" key="descriptionTextField">
+							<string key="name">descriptionTextField</string>
+							<string key="candidateClassName">UITextField</string>
+						</object>
 						<object class="IBToOneOutletInfo" key="dollarPicker">
 							<string key="name">dollarPicker</string>
 							<string key="candidateClassName">UIPickerView</string>
 						</object>
-						<object class="IBToOneOutletInfo" key="lbl_emailPhoneLabel">
-							<string key="name">lbl_emailPhoneLabel</string>
+						<object class="IBToOneOutletInfo" key="lbl_descriptionLabel">
+							<string key="name">lbl_descriptionLabel</string>
 							<string key="candidateClassName">UILabel</string>
 						</object>
-						<object class="IBToOneOutletInfo" key="lbl_nameLabel">
-							<string key="name">lbl_nameLabel</string>
+						<object class="IBToOneOutletInfo" key="lbl_emailPhoneLabel">
+							<string key="name">lbl_emailPhoneLabel</string>
 							<string key="candidateClassName">UILabel</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="lbl_whoOwesWho">
@@ -732,10 +752,6 @@
 						</object>
 						<object class="IBToOneOutletInfo" key="recipientEmailPhoneTextField">
 							<string key="name">recipientEmailPhoneTextField</string>
-							<string key="candidateClassName">UITextField</string>
-						</object>
-						<object class="IBToOneOutletInfo" key="recipientNameTextField">
-							<string key="name">recipientNameTextField</string>
 							<string key="candidateClassName">UITextField</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="saveButton">

@@ -41,6 +41,7 @@
     [self.view addSubview:button];
     
     isPositive = YES;
+    payNowButton.hidden = YES;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bumpReceived:) name:@"bumpReceived" object:nil];
 }
@@ -139,7 +140,10 @@
         activityIndicator.hidden = NO;
         [activityIndicator startAnimating];
         
-        NSString *amountString = [NSString stringWithFormat:@"%.2f", amount];
+        NSString *amountString;
+        if(isPositive) amountString = [NSString stringWithFormat:@"%.2f", amount];
+        else amountString = [NSString stringWithFormat:@"neg%.2f", amount];
+        
         int payedNumber = payed ? 2 : 0;
         
         NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://uselessinter.net/money/api/add?e=%@&a=%@&d=%@&p=%d&me=%@",recipientEmailPhoneTextField.text,amountString, descriptionTextField.text,payedNumber, [[NSUserDefaults standardUserDefaults] objectForKey:@"id"]]];
@@ -147,10 +151,14 @@
         
         AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
             
-            //ADD PERSON
+            //ADD PERSON TO LIST
             
             [activityIndicator stopAnimating];
-                
+            
+            int id_num = [[JSON valueForKeyPath:@"success"] intValue];
+            
+            NSLog(@"ID: %d", id_num);
+            
             UIAlertView *alert = [[UIAlertView alloc]
                                       initWithTitle:@"Congratulations" message:@"Payment Sent" delegate:self
                                       cancelButtonTitle:@"OK" otherButtonTitles:nil];
@@ -160,6 +168,7 @@
             
             
         } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id result){
+            [activityIndicator stopAnimating];
             NSLog(@"ERROR: %@", [error localizedDescription]);
         }];
         
@@ -283,6 +292,8 @@
 	payment.paymentCurrency = @"USD";
 	payment.description = @"Spot™ Friend Pay Back";
 	payment.merchantName = @"Spot™";
+    
+    //ADD IN PAY PAYPAL FEE CALCULATION
 	
     float total;
 	float dollars = [dollarPicker selectedRowInComponent:0];
@@ -292,6 +303,8 @@
     NSString *totalString = [NSString stringWithFormat:@"%.2f", total];
     
     NSDecimalNumber *totalPrice = [NSDecimalNumber decimalNumberWithString:totalString];
+    
+    payment.subTotal = totalPrice;
     
 	//invoiceItems is a list of PayPalInvoiceItem objects
 	//NOTE: sum of totalPrice for all items must equal payment.subTotal

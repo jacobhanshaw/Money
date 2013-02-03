@@ -174,8 +174,8 @@ BOOL processingLogin;
             
             if(id_num == -1){
                 UIAlertView *alert = [[UIAlertView alloc]
-                                      initWithTitle:@"Error" message:@"Email Address is Already in Use" delegate:self
-                                      cancelButtonTitle:@"OK" otherButtonTitles:nil];
+                                      initWithTitle:@"Email in Use" message:@"Email Address is Already in Use" delegate:self
+                                      cancelButtonTitle:@"Cancel" otherButtonTitles:@"Claim Account", nil];
                 [alert show];
             }
             else if(id_num < 0) {
@@ -200,6 +200,16 @@ BOOL processingLogin;
         [operation start];
     }
 }
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+	NSString *title = [alertView title];
+    
+    if([title isEqualToString:@"Email in Use"]) {
+        if (buttonIndex == 1) {
+            //CLAIM EMAIL ADDRESS
+        }
+    }
+}
+
 
 -(BOOL) NSStringIsValidEmail:(NSString *)checkString
 {
