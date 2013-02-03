@@ -40,6 +40,7 @@
         if([defaults objectForKey:@"id"] == nil) [defaults setObject:@"" forKey:@"id"];
         if([defaults objectForKey:@"first_name"] == nil) [defaults setObject:@"" forKey:@"first_name"];
         if([defaults objectForKey:@"last_name"] == nil) [defaults setObject:@"" forKey:@"last_name"];
+        if([defaults objectForKey:@"email"] == nil) [defaults setObject:@"" forKey:@"email"];
         [defaults synchronize];
     }
     return self;

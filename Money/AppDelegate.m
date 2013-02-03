@@ -52,8 +52,11 @@
     
     [[BumpClient sharedClient] setChannelConfirmedBlock:^(BumpChannelID channel) {
         NSLog(@"Channel with %@ confirmed.", [[BumpClient sharedClient] userIDForChannel:channel]);
-        [[BumpClient sharedClient] sendData:[[NSString stringWithFormat:@"Hello, %@", [[UIDevice currentDevice] name]] dataUsingEncoding:NSUTF8StringEncoding]
-                                  toChannel:channel];
+        
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        if(![[defaults objectForKey:@"email"] isEqualToString:@""] && !([defaults objectForKey:@"email"] == nil)) [[BumpClient sharedClient] sendData:[[defaults objectForKey:@"email"] dataUsingEncoding:NSUTF8StringEncoding] toChannel:channel];
+        
+        else [[BumpClient sharedClient] sendData:[[NSString stringWithFormat:@"Hello, %@", [[UIDevice currentDevice] name]] dataUsingEncoding:NSUTF8StringEncoding] toChannel:channel];
     }];
     
     [[BumpClient sharedClient] setDataReceivedBlock:^(BumpChannelID channel, NSData *data) {

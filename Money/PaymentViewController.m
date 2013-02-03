@@ -8,11 +8,9 @@
 
 #import "PaymentViewController.h"
 
-@interface PaymentViewController ()
-
-@end
-
 @implementation PaymentViewController
+
+@synthesize bumpEmail;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -42,7 +40,15 @@
     
     [self.view addSubview:button];
     
+    isPositive = YES;
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bumpReceived:) name:@"bumpReceived" object:nil];
+}
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
+    bumpEmail = @"";
 }
 
 - (void)didReceiveMemoryWarning
@@ -52,20 +58,34 @@
 }
 
 - (void)viewDidUnload {
-    lbl_nameLabel = nil;
+    lbl_descriptionLabel = nil;
     lbl_emailPhoneLabel = nil;
-    recipientNameTextField = nil;
+    descriptionTextField = nil;
     recipientEmailPhoneTextField = nil;
     dollarPicker = nil;
     centPicker = nil;
     saveButton = nil;
     backButton = nil;
     payNowButton = nil;
+    lbl_whoOwesWho = nil;
+    posNegButton = nil;
+    activityIndicator = nil;
     [super viewDidUnload];
 }
 
 - (IBAction)saveButtonPressed:(id)sender {
-
+    float total;
+	float dollars = [dollarPicker selectedRowInComponent:0];
+    float change = [centPicker selectedRowInComponent:0];
+    total = dollars + change/100;
+    
+    if([recipientEmailPhoneTextField.text isEqualToString:@""] || recipientEmailPhoneTextField.text == nil || !([self NSStringIsValidEmail:recipientEmailPhoneTextField.text] || [self NSStringIsValidPhoneNumber:recipientEmailPhoneTextField.text])){
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Payment Failed"
+                                                        message:@"A Payment Cannot Be Made Without a Valid Phone or Email Address"
+                                                       delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
+    else [self addPaymentTo:recipientEmailPhoneTextField.text for:total thatIsPayed:NO];
 }
 
 - (IBAction)backButtonPressed:(id)sender {
@@ -73,11 +93,80 @@
 }
 
 - (IBAction)payNowButtonPressed:(id)sender {
+    //NOT USED
+}
 
+- (IBAction)posNegButtonPressed:(id)sender {
+    isPositive = !isPositive;
+    [self updateButtonAndLabel];
+}
+
+- (void)updateButtonAndLabel {
+    float total;
+	float dollars = [dollarPicker selectedRowInComponent:0];
+    float change = [centPicker selectedRowInComponent:0];
+    total = dollars + change/100;
+    
+    if(isPositive){
+        posNegButton.titleLabel.text = @"+";
+   //     if(!([descriptionTextField.text isEqualToString:@""] || descriptionTextField..text == nil)) lbl_whoOwesWho.text = [NSString stringWithFormat:@"%@ owes you: $%.2f", lbl_descriptionLabel.text, total];
+        lbl_whoOwesWho.text = [NSString stringWithFormat:@"This person owes you: $%.2f", total];
+    }
+    else{
+        posNegButton.titleLabel.text = @"-";
+       // if(!([descriptionTextField..text isEqualToString:@""] || descriptionTextField..text == nil)) lbl_whoOwesWho.text = [NSString stringWithFormat:@"You owe %@: $%.2f", lbl_descriptionLabel.text, total];
+        lbl_whoOwesWho.text = [NSString stringWithFormat:@"You owe this person: $%.2f", total];
+    }
 }
 
 - (void)bumpReceived {
     NSLog(@"I GOT ALL THE DATA: %@", ((AppDelegate *)[[UIApplication sharedApplication] delegate]).bumpStringReceived);
+    bumpEmail = ((AppDelegate *)[[UIApplication sharedApplication] delegate]).bumpStringReceived;
+    [self payWithPayPal];
+}
+
+//ADD CURRENCY
+- (void)addPaymentTo:(NSString *)recipient for:(float)amount thatIsPayed:(BOOL)payed {
+    
+    if(!isPositive) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Payment Failed"
+                                           message:@"Nice Try. You Cannot Pay People Negative Amounts"
+                                          delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
+    else {
+        
+        activityIndicator.hidden = NO;
+        [activityIndicator startAnimating];
+        
+        NSString *amountString = [NSString stringWithFormat:@"%.2f", amount];
+        int payedNumber = payed ? 2 : 0;
+        
+        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://uselessinter.net/money/api/add?e=%@&a=%@&d=%@&p=%d",recipientEmailPhoneTextField.text,amountString, descriptionTextField.text,payedNumber]];
+        NSURLRequest *request = [NSURLRequest requestWithURL:url];
+        
+        AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+            
+            //ADD PERSON
+            
+            [activityIndicator stopAnimating];
+                
+            UIAlertView *alert = [[UIAlertView alloc]
+                                      initWithTitle:@"Congratulations" message:@"Payment Sent" delegate:self
+                                      cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+                
+            [self dismissViewControllerAnimated:YES completion:nil];
+            
+            
+        } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id result){
+            NSLog(@"ERROR: %@", [error localizedDescription]);
+        }];
+        
+        [operation start];
+    }
+    
+    //NEED ID BACK IF AVAILABLE
 }
 
 #pragma mark -
@@ -99,9 +188,7 @@
 //
 //payKey is a string that uniquely identifies the transaction.
 //paymentStatus is an enum: STATUS_COMPLETED, STATUS_CREATED, or STATUS_OTHER
-- (void)paymentSuccessWithKey:
-(NSString *)payKey andStatus:
-(PayPalPaymentStatus)paymentStatus {
+- (void)paymentSuccessWithKey:(NSString *)payKey andStatus:(PayPalPaymentStatus)paymentStatus {
     status = PAYMENTSTATUS_SUCCESS;
 }
 
@@ -112,10 +199,7 @@
 //correlationID is a string that uniquely identifies to PayPal the failed transaction.
 //errorCode is generally (but not always) a numerical code associated with the error.
 //errorMessage is a human-readable string describing the error that occurred.
-- (void)paymentFailedWithCorrelationID:
-(NSString *)correlationID andErrorCode:
-(NSString *)errorCode andErrorMessage:
-(NSString *)errorMessage {
+- (void)paymentFailedWithCorrelationID:(NSString *)correlationID andErrorCode:(NSString *)errorCode andErrorMessage:(NSString *)errorMessage {
     status = PAYMENTSTATUS_FAILED;
 }
 
@@ -184,29 +268,60 @@
     
 	//for a payment with a single recipient, use a PayPalPayment object
 	PayPalPayment *payment = [[PayPalPayment alloc] init];
-	payment.recipient = @"example-merchant-1@paypal.com";
+    if(![bumpEmail isEqualToString:@""]) payment.recipient = bumpEmail;
+    else{
+        if(![self NSStringIsValidEmail:recipientEmailPhoneTextField.text] && ![self NSStringIsValidPhoneNumber:recipientEmailPhoneTextField.text]){
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+											   message:@"Not a Valid Email or Phone Number"
+											  delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+        }
+        else{
+            payment.recipient = recipientEmailPhoneTextField.text;
+        }
+    }
 	payment.paymentCurrency = @"USD";
-	payment.description = @"Teddy Bear";
-	payment.merchantName = @"Joe's Bear Emporium";
+	payment.description = @"Spot™ Friend Pay Back";
+	payment.merchantName = @"Spot™";
 	
-	//subtotal of all items, without tax and shipping
-	payment.subTotal = [NSDecimalNumber decimalNumberWithString:@"10"];
-	
-	//invoiceData is a PayPalInvoiceData object which contains tax, shipping, and a list of PayPalInvoiceItem objects
-	payment.invoiceData = [[PayPalInvoiceData alloc] init];
-	payment.invoiceData.totalShipping = [NSDecimalNumber decimalNumberWithString:@"2"];
-	payment.invoiceData.totalTax = [NSDecimalNumber decimalNumberWithString:@"0.35"];
-	
+    float total;
+	float dollars = [dollarPicker selectedRowInComponent:0];
+    float change = [centPicker selectedRowInComponent:0];
+    total = dollars + change/100;
+    
+    NSString *totalString = [NSString stringWithFormat:@"%.2f", total];
+    
+    NSDecimalNumber *totalPrice = [NSDecimalNumber decimalNumberWithString:totalString];
+    
 	//invoiceItems is a list of PayPalInvoiceItem objects
 	//NOTE: sum of totalPrice for all items must equal payment.subTotal
 	//NOTE: example only shows a single item, but you can have more than one
 	payment.invoiceData.invoiceItems = [NSMutableArray array];
 	PayPalInvoiceItem *item = [[PayPalInvoiceItem alloc] init];
-	item.totalPrice = payment.subTotal;
-	item.name = @"Teddy";
+	item.totalPrice = totalPrice;
+	item.name = @"Spot™ Friend Pay Back";
 	[payment.invoiceData.invoiceItems addObject:item];
     
     [[PayPal getPayPalInst] checkoutWithPayment:payment];
+    
+    [self addPaymentTo:payment.recipient for:total thatIsPayed:YES];
+}
+
+-(BOOL) NSStringIsValidEmail:(NSString *)checkString
+{
+    BOOL stricterFilter = YES; // Discussion http://blog.logichigh.com/2010/09/02/validating-an-e-mail-address/
+    NSString *stricterFilterString = @"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
+    NSString *laxString = @".+@.+\\.[A-Za-z]{2}[A-Za-z]*";
+    NSString *emailRegex = stricterFilter ? stricterFilterString : laxString;
+    NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
+    return [emailTest evaluateWithObject:checkString];
+}
+
+-(BOOL) NSStringIsValidPhoneNumber:(NSString *)checkString
+{
+    NSString *phoneRegex = @"[235689][0-9]{6}([0-9]{3})?";
+    NSPredicate *test = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", phoneRegex];
+    return [test evaluateWithObject:checkString];
 }
 
 #pragma mark TextField Methods
@@ -219,8 +334,19 @@
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    [recipientNameTextField resignFirstResponder];
+    [descriptionTextField resignFirstResponder];
     [recipientEmailPhoneTextField resignFirstResponder];
+}
+
+- (BOOL)textFieldShouldClear:(UITextField *)textField {
+    [self performSelector:@selector(updateButtonAndLabel) withObject:nil afterDelay:0.1];
+    return YES;
+}
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    [self performSelector:@selector(updateButtonAndLabel) withObject:nil afterDelay:0.1];
+    if (textField.text.length >= MAXDESCRIPTIONLENGTH && range.length == 0) return NO; // return NO to not change text
+    return YES;
 }
 
 #pragma mark Picker Methods
@@ -245,7 +371,7 @@
 }
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
-    
+    [self updateButtonAndLabel];
 }
 
 

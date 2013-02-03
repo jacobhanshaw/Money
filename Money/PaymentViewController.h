@@ -11,6 +11,8 @@
 #import "PayPalPayment.h"
 #import "PayPalInvoiceItem.h"
 
+#define MAXDESCRIPTIONLENGTH 32
+
 typedef enum PaymentStatuses {
 	PAYMENTSTATUS_SUCCESS,
 	PAYMENTSTATUS_FAILED,
@@ -19,10 +21,11 @@ typedef enum PaymentStatuses {
 
 @interface PaymentViewController : UIViewController  <UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate, PayPalPaymentDelegate> {
     
-    IBOutlet UILabel *lbl_nameLabel;
+    IBOutlet UILabel *lbl_descriptionLabel;
     IBOutlet UILabel *lbl_emailPhoneLabel;
+    IBOutlet UILabel *lbl_whoOwesWho;
 
-    IBOutlet UITextField *recipientNameTextField;
+    IBOutlet UITextField *descriptionTextField;
     IBOutlet UITextField *recipientEmailPhoneTextField;
     
     IBOutlet UIPickerView *dollarPicker;
@@ -32,13 +35,21 @@ typedef enum PaymentStatuses {
     IBOutlet UIButton *saveButton;
     IBOutlet UIButton *backButton;
     IBOutlet UIButton *payNowButton;
+    IBOutlet UIButton *posNegButton;
+    
+    IBOutlet UIActivityIndicatorView *activityIndicator;
     
     PaymentStatus status;
+    NSString *bumpEmail;
+    BOOL isPositive;
 }
+
+@property (nonatomic) NSString *bumpEmail;
 
 - (IBAction)saveButtonPressed:(id)sender;
 - (IBAction)backButtonPressed:(id)sender;
 - (IBAction)payNowButtonPressed:(id)sender;
+- (IBAction)posNegButtonPressed:(id)sender;
 
 
 

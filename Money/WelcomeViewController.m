@@ -187,7 +187,8 @@ BOOL processingLogin;
             else {
             [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%d", id_num] forKey:@"id"];
             [[NSUserDefaults standardUserDefaults] setObject:fNameTextField.text forKey:@"first_name"];
-                [[NSUserDefaults standardUserDefaults] setObject:lNameTextField.text forKey:@"last_name"];
+            [[NSUserDefaults standardUserDefaults] setObject:lNameTextField.text forKey:@"last_name"];
+            [[NSUserDefaults standardUserDefaults] setObject:emailTextField.text forKey:@"email"];
             [[NSUserDefaults standardUserDefaults] synchronize];
             
             [self dismissViewControllerAnimated:YES completion:nil];
