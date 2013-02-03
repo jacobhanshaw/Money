@@ -7,15 +7,20 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "AFJSONRequestOperation.h"
 
-@interface WelcomeViewController : UIViewController<UITextFieldDelegate> {
+@interface WelcomeViewController : UIViewController<UITableViewDataSource, UITextFieldDelegate, UITextFieldDelegate> {
     
     IBOutlet UILabel *lbl_name;
     IBOutlet UITextField *fNameTextField;
     IBOutlet UITextField *lNameTextField;
     IBOutlet UITextField *emailTextField;
     IBOutlet UIButton *goButton;
+    IBOutlet UITableView *createUserTableView;
+    IBOutlet UIActivityIndicatorView *activityIndicator;
     
 }
+
+- (IBAction)goButtonPressed:(id)sender;
 
 @end

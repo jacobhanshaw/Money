@@ -198,6 +198,19 @@
 		DD8C1E2016BD164E00BCA187 /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				DDC1867416BD9BD600ECC666 /* CFNetwork.framework */,
+				DDC1867216BD9BC900ECC666 /* CoreLocation.framework */,
+				DDC1866B16BD9B7900ECC666 /* AssetsLibrary.framework */,
+				DDC1866916BD9B6D00ECC666 /* AVFoundation.framework */,
+				DDC1866716BD9B6100ECC666 /* MediaPlayer.framework */,
+				DDC1866516BD9B5700ECC666 /* AudioToolbox.framework */,
+				DDC1866316BD9B4F00ECC666 /* ImageIO.framework */,
+				DDC1866116BD9B4000ECC666 /* MobileCoreServices.framework */,
+				DD8C1E3916BD17D000BCA187 /* libz.dylib */,
+				DD8C1E3716BD17C000BCA187 /* libxml2.dylib */,
+				DD8C1E3116BD172100BCA187 /* Security.framework */,
+				DD8C1E2F16BD171600BCA187 /* AddressBook.framework */,
+				DD8C1E2D16BD170200BCA187 /* SystemConfiguration.framework */,
 				DDC1867616BD9D0D00ECC666 /* AFHTTPClient.h */,
 				DDC1867716BD9D0D00ECC666 /* AFHTTPClient.m */,
 				DDC1867816BD9D0D00ECC666 /* AFHTTPRequestOperation.h */,
@@ -237,19 +250,6 @@
 		DDBEFC9216B1A67D0005125A = {
 			isa = PBXGroup;
 			children = (
-				DDC1867416BD9BD600ECC666 /* CFNetwork.framework */,
-				DDC1867216BD9BC900ECC666 /* CoreLocation.framework */,
-				DDC1866B16BD9B7900ECC666 /* AssetsLibrary.framework */,
-				DDC1866916BD9B6D00ECC666 /* AVFoundation.framework */,
-				DDC1866716BD9B6100ECC666 /* MediaPlayer.framework */,
-				DDC1866516BD9B5700ECC666 /* AudioToolbox.framework */,
-				DDC1866316BD9B4F00ECC666 /* ImageIO.framework */,
-				DDC1866116BD9B4000ECC666 /* MobileCoreServices.framework */,
-				DD8C1E3916BD17D000BCA187 /* libz.dylib */,
-				DD8C1E3716BD17C000BCA187 /* libxml2.dylib */,
-				DD8C1E3116BD172100BCA187 /* Security.framework */,
-				DD8C1E2F16BD171600BCA187 /* AddressBook.framework */,
-				DD8C1E2D16BD170200BCA187 /* SystemConfiguration.framework */,
 				DD8C1E2016BD164E00BCA187 /* Library */,
 				DDBEFCA916B1A67E0005125A /* Money */,
 				DDBEFCCB16B1A67E0005125A /* MoneyTests */,
@@ -574,6 +574,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Library\"",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_INSTALLED_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
@@ -595,6 +596,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Library\"",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_INSTALLED_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;

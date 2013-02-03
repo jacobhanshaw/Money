@@ -26,9 +26,6 @@
 -(id)init {
     self = [super init];
     if (self) {
-		//Init UserDefaults
-		//NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        
         //NSNotificationCenter *dispatcher = [NSNotificationCenter defaultCenter];
         currentTransactions = [[NSMutableArray alloc] init];
 	}

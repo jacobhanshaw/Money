@@ -11,6 +11,7 @@
 #import "AppModel.h"
 #import "Transaction.h"
 #import "AFJSONRequestOperation.h"
+#import "WelcomeViewController.h"
 
 @interface RootViewController : UIViewController <UITableViewDataSource, UITableViewDelegate> {
     
@@ -23,6 +24,10 @@
     IBOutlet UITableView *debtsTableView;
     IBOutlet UIButton *addButton;
     IBOutlet UIButton *payNowButton;
+   
+    IBOutlet UIActivityIndicatorView *activityIndicator;
+    
+    float totalAmount;
 }
 
 + (RootViewController *)sharedRootViewController;

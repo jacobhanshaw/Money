@@ -34,6 +34,13 @@
     self = [super init];
     if (self) {
         self.view.frame = frame;
+        
+        //Init UserDefaults
+		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        if([defaults objectForKey:@"id"] == nil) [defaults setObject:@"" forKey:@"id"];
+        if([defaults objectForKey:@"first_name"] == nil) [defaults setObject:@"" forKey:@"first_name"];
+        if([defaults objectForKey:@"last_name"] == nil) [defaults setObject:@"" forKey:@"last_name"];
+        [defaults synchronize];
     }
     return self;
 }
@@ -56,12 +63,17 @@
 - (void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if([defaults objectForKey:@"token"] == [NSNull null]){
-        
-    }
-    
     [self populateRecentTransactionsTable];
+}
+
+-(void) viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([[defaults objectForKey:@"id"] isEqualToString:@""]){
+        WelcomeViewController *welcome = [[WelcomeViewController alloc] init];
+        [self presentViewController:welcome animated:YES completion:nil];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -83,14 +95,27 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell"];
-    if (cell == nil) cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"Cell"];
+    if (cell == nil) cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"Cell"];
     
-    cell.textLabel.text = ((Transaction *)[[AppModel sharedAppModel].currentTransactions objectAtIndex:indexPath.row]).otherParty;
+    if(((Transaction *)[[AppModel sharedAppModel].currentTransactions objectAtIndex:indexPath.row]).isLoaner) {
+        cell.textLabel.text = [NSString stringWithFormat:@"%@ owes you", ((Transaction *)[[AppModel sharedAppModel].currentTransactions objectAtIndex:indexPath.row]).otherParty];
+        cell.detailTextLabel.textColor = [UIColor greenColor];
+    }
+    else {
+        cell.textLabel.text = [NSString stringWithFormat:@"You owe %@", ((Transaction *)[[AppModel sharedAppModel].currentTransactions objectAtIndex:indexPath.row]).otherParty];
+        cell.detailTextLabel.textColor = [UIColor redColor];
+    }
+    
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"$%.2f", ((Transaction *)[[AppModel sharedAppModel].currentTransactions objectAtIndex:indexPath.row]).amount];
     
     return cell;
 }
 
 - (void) populateRecentTransactionsTable {
+    
+    activityIndicator.hidden = NO;
+    [activityIndicator startAnimating];
+    
     NSURL *url = [NSURL URLWithString:@"http://uselessinter.net/money/api/getRecentTransactions?id=1"];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     
@@ -104,6 +129,8 @@
 }
 
 - (void) parseRecentTransactions: (id) JSON {
+    totalAmount = 0;
+    [[AppModel sharedAppModel].currentTransactions removeAllObjects];
     NSArray *transactions = [[NSArray alloc] init];
     transactions = [JSON valueForKeyPath:@"transactions"];
     for(int i = 0; i < [transactions count]; ++i){
@@ -115,8 +142,16 @@
         transaction.amount = [[[transactions objectAtIndex:i] valueForKeyPath:@"amount"] floatValue];
         transaction.currency = [[transactions objectAtIndex:i] valueForKeyPath:@"currency"];
         [[AppModel sharedAppModel].currentTransactions addObject:transaction];
+        
+        if(transaction.isLoaner) totalAmount += transaction.amount;
+        else totalAmount -= transaction.amount;
     }
+    if(totalAmount < 0) lbl_debtValue.text = [NSString stringWithFormat:@"-$%.2f", 0-totalAmount];
+    else lbl_debtValue.text = [NSString stringWithFormat:@"$%.2f", totalAmount];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    lbl_userName.text = [NSString stringWithFormat:@"%@ %@", [defaults objectForKey:@"first_name"], [defaults objectForKey:@"last_name"]];
     [debtsTableView reloadData];
+    [activityIndicator stopAnimating];
 }
 
 - (void)viewDidUnload {
@@ -127,6 +162,7 @@
     lbl_debtLabel = nil;
     lbl_debtValue = nil;
     addButton = nil;
+    activityIndicator = nil;
     [super viewDidUnload];
 }
 @end
