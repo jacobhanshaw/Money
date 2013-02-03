@@ -115,12 +115,14 @@
     total = dollars + change/100;
     
     if(isPositive){
-        posNegButton.titleLabel.text = @"+";
+        [posNegButton setTitle:@"+" forState:UIControlStateNormal];
+        [posNegButton setTitle:@"+" forState:UIControlStateHighlighted];
    //     if(!([descriptionTextField.text isEqualToString:@""] || descriptionTextField..text == nil)) lbl_whoOwesWho.text = [NSString stringWithFormat:@"%@ owes you: $%.2f", lbl_descriptionLabel.text, total];
         lbl_whoOwesWho.text = [NSString stringWithFormat:@"This person owes you: $%.2f", total];
     }
     else{
-        posNegButton.titleLabel.text = @"-";
+        [posNegButton setTitle:@"-" forState:UIControlStateNormal];
+        [posNegButton setTitle:@"-" forState:UIControlStateHighlighted];
        // if(!([descriptionTextField..text isEqualToString:@""] || descriptionTextField..text == nil)) lbl_whoOwesWho.text = [NSString stringWithFormat:@"You owe %@: $%.2f", lbl_descriptionLabel.text, total];
         lbl_whoOwesWho.text = [NSString stringWithFormat:@"You owe this person: $%.2f", total];
     }
@@ -136,10 +138,10 @@
 //ADD CURRENCY
 - (void)addPaymentTo:(NSString *)recipient for:(float)amount thatIsPayed:(BOOL)payed {
     
-    if(!isPositive) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Payment Failed"
-                                           message:@"Nice Try. You Cannot Pay People Negative Amounts"
-                                          delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    if (amount <= 0){
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                        message:@"You Cannot Save or Add a Transaction for Zero Dollars"
+                                                       delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
     }
     else {
@@ -252,6 +254,7 @@
 	switch (status) {
 		case PAYMENTSTATUS_SUCCESS:
 	//		[self.navigationController pushViewController:[[[SuccessViewController alloc] init] autorelease] animated:TRUE];
+            [self addPaymentTo:payPayRecipient for:payPalAmount thatIsPayed:YES];
 			break;
 		case PAYMENTSTATUS_FAILED:
 			alert = [[UIAlertView alloc] initWithTitle:@"Order failed"
@@ -268,6 +271,32 @@
 }
 
 - (void)payWithPayPal {
+    
+    
+    float total;
+	float dollars = [dollarPicker selectedRowInComponent:0];
+    float change = [centPicker selectedRowInComponent:0];
+    total = dollars + change/100;
+    
+    if(![self NSStringIsValidEmail:recipientEmailPhoneTextField.text] && ![self NSStringIsValidPhoneNumber:recipientEmailPhoneTextField.text]){
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                        message:@"Not a Valid Email or Phone Number"
+                                                       delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
+    else if(total <= 0){
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                        message:@"You Cannot Save or Add a Transaction for Zero Dollars"
+                                                       delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
+    else if(!isPositive){
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Payment Failed"
+                                                        message:@"Nice Try. You Cannot Pay People Negative Amounts"
+                                                       delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
+    else {
     //dismiss any native keyboards
     //	[preapprovalField resignFirstResponder];
 	
@@ -298,14 +327,9 @@
     }
 	payment.paymentCurrency = @"USD";
 	payment.description = @"Spot™ Friend Pay Back";
-	payment.merchantName = @"Spot™";
+    payment.merchantName = payment.recipient;
     
     //ADD IN PAY PAYPAL FEE CALCULATION
-	
-    float total;
-	float dollars = [dollarPicker selectedRowInComponent:0];
-    float change = [centPicker selectedRowInComponent:0];
-    total = dollars + change/100;
     
     NSString *totalString = [NSString stringWithFormat:@"%.2f", total];
     
@@ -324,7 +348,10 @@
     
     [[PayPal getPayPalInst] checkoutWithPayment:payment];
     
-    [self addPaymentTo:payment.recipient for:total thatIsPayed:YES];
+        payPayRecipient = payment.recipient;
+        payPalAmount = total;
+  //  [self addPaymentTo:payment.recipient for:total thatIsPayed:YES];
+    }
 }
 
 -(BOOL) NSStringIsValidEmail:(NSString *)checkString

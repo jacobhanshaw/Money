@@ -8,8 +8,6 @@
 
 #import "WelcomeViewController.h"
 
-BOOL processingLogin;
-
 @interface WelcomeViewController ()
 
 @end
@@ -29,10 +27,7 @@ BOOL processingLogin;
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    processingLogin = NO;
- //   activityIndicator = [[UIActivityIndicatorView alloc] init];
     returnPressed = NO;
-  //  activityIndicator.hidden = YES;
 }
 
 #pragma mark TableView Methods
@@ -70,12 +65,13 @@ BOOL processingLogin;
         emailTextField = [[UITextField alloc] initWithFrame:CGRectMake(5, 0, 280, 21)];
         emailTextField.delegate = self;
         emailTextField.placeholder = @"Paypal Email Address";
+        emailTextField.autocapitalizationType = UITextAutocapitalizationTypeNone;
         emailTextField.autocorrectionType = UITextAutocorrectionTypeNo;
         [emailTextField setClearButtonMode:UITextFieldViewModeWhileEditing];
         cell.accessoryView = emailTextField;
         [table addSubview:emailTextField];
     }
-    else NSLog(@"OH NOEZ: THE ERRORZ");
+    else NSLog(@"WelcomeViewController: ");
     
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;
@@ -202,6 +198,8 @@ BOOL processingLogin;
             [self dismissViewControllerAnimated:YES completion:nil];
             }
         } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id result){
+            [activityIndicator stopAnimating];
+            goButton.hidden = NO;
             NSLog(@"ERROR: %@", [error localizedDescription]);
         }];
         
@@ -266,6 +264,8 @@ BOOL processingLogin;
             [self dismissViewControllerAnimated:YES completion:nil];
         }
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id result){
+        [activityIndicator stopAnimating];
+        goButton.hidden = NO;
         NSLog(@"ERROR: %@", [error localizedDescription]);
     }];
     

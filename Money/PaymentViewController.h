@@ -42,6 +42,9 @@ typedef enum PaymentStatuses {
     PaymentStatus status;
     NSString *bumpEmail;
     BOOL isPositive;
+    
+    NSString *payPayRecipient;
+    float payPalAmount;
 }
 
 @property (nonatomic) NSString *bumpEmail;
