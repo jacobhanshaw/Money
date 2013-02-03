@@ -84,7 +84,7 @@
 						<int key="IBUIContentMode">7</int>
 						<bool key="IBUIUserInteractionEnabled">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-						<string key="IBUIText">E-mail Address or Phone Number:</string>
+						<string key="IBUIText">E-mail Address:</string>
 						<reference key="IBUITextColor" ref="629078244"/>
 						<nil key="IBUIHighlightedColor"/>
 						<int key="IBUIBaselineAdjustment">0</int>
@@ -242,7 +242,6 @@
 						<string key="NSFrame">{{24, 398}, {272, 53}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -554,7 +553,6 @@
 						<reference key="object" ref="191373211"/>
 						<array class="NSMutableArray" key="children">
 							<reference ref="64494188"/>
-							<reference ref="275474313"/>
 							<reference ref="518520411"/>
 							<reference ref="913598358"/>
 							<reference ref="247260397"/>
@@ -565,6 +563,7 @@
 							<reference ref="56560065"/>
 							<reference ref="537854983"/>
 							<reference ref="976219283"/>
+							<reference ref="275474313"/>
 						</array>
 						<reference key="parent" ref="0"/>
 					</object>
