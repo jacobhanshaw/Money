@@ -43,6 +43,9 @@
     isPositive = YES;
     payNowButton.hidden = YES;
     
+    recipientEmailPhoneTextField.autocapitalizationType = UITextAutocapitalizationTypeNone;
+    recipientEmailPhoneTextField.autocorrectionType = UITextAutocorrectionTypeNo;
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(bumpReceived) name:@"bumpReceived" object:nil];
 }
 
