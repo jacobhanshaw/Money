@@ -117,7 +117,7 @@
     activityIndicator.hidden = NO;
     [activityIndicator startAnimating];
     
-    NSURL *url = [NSURL URLWithString:@"http://uselessinter.net/money/api/getRecentTransactions?id=1"];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://uselessinter.net/money/api/getRecentTransactions?id=%@", [[NSUserDefaults standardUserDefaults] objectForKey:@"id"]]];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
