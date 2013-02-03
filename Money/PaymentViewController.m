@@ -142,7 +142,7 @@
         NSString *amountString = [NSString stringWithFormat:@"%.2f", amount];
         int payedNumber = payed ? 2 : 0;
         
-        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://uselessinter.net/money/api/add?e=%@&a=%@&d=%@&p=%d",recipientEmailPhoneTextField.text,amountString, descriptionTextField.text,payedNumber]];
+        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://uselessinter.net/money/api/add?e=%@&a=%@&d=%@&p=%d&me=%@",recipientEmailPhoneTextField.text,amountString, descriptionTextField.text,payedNumber, [[NSUserDefaults standardUserDefaults] objectForKey:@"id"]]];
         NSURLRequest *request = [NSURLRequest requestWithURL:url];
         
         AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
